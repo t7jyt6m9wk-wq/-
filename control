@@ -1,9 +1,9 @@
-Package: com.yourname.lockscreenquickactions
+Package: com.t7jyt6m9wk.lockscreenquickactions
 Name: Lockscreen Quick Actions
 Version: 1.0.0
 Architecture: iphoneos-arm64e
-Description: Customize lockscreen camera and flashlight buttons to open other apps.
-Maintainer: Your Name
-Author: Your Name
+Description: Customize lockscreen buttons.
+Maintainer: t7jyt6m9wk
+Author: t7jyt6m9wk
 Section: Tweaks
-Depends: mobilesubstrate | ellekit, firmware (>= 15.0)
+Depends: mobilesubstrate, ellekit, firmware (>= 15.0)
