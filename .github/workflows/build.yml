@@ -5,22 +5,28 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          submodules: recursive
 
-      - name: Install dependencies
+      - name: Install Theos
         run: |
-          sudo apt-get update
-          sudo apt-get install -y make git curl xz-utils
+          git clone --recursive https://github.com/theos/theos.git $HOME/theos
+          curl -L https://github.com/theos/sdks/archive/master.zip -o /tmp/sdks.zip
+          unzip -q /tmp/sdks.zip -d $HOME/theos/sdks
+          mv $HOME/theos/sdks/sdks-master/iPhoneOS15.5.sdk $HOME/theos/sdks/
 
-      - name: Install roothide Theos
+      - name: Install roothide Patcher
         run: |
-          bash -c "$(curl -fsSL https://raw.githubusercontent.com/roothide/theos/master/bin/install-theos)"
+          git clone https://github.com/roothide/theos.git /tmp/roothide-theos
+          cp -r /tmp/roothide-theos/* $HOME/theos/
 
       - name: Build package
         run: |
           export THEOS=$HOME/theos
+          export PATH=$THEOS/bin:$PATH
           make package
 
       - name: Upload deb
