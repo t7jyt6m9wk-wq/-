@@ -5,23 +5,24 @@ on:
 
 jobs:
   build:
-    runs-on: macos-latest
+    runs-on: macos-13
     steps:
       - uses: actions/checkout@v4
-        with:
-          submodules: recursive
 
-      - name: Install Theos
+      - name: Setup Theos
         run: |
-          git clone --recursive https://github.com/theos/theos.git $HOME/theos
-          curl -L https://github.com/theos/sdks/archive/master.zip -o /tmp/sdks.zip
-          unzip -q /tmp/sdks.zip -d $HOME/theos/sdks
-          mv $HOME/theos/sdks/sdks-master/iPhoneOS15.5.sdk $HOME/theos/sdks/
-
-      - name: Install roothide Patcher
-        run: |
-          git clone https://github.com/roothide/theos.git /tmp/roothide-theos
-          cp -r /tmp/roothide-theos/* $HOME/theos/
+          # 1. 下载基础 Theos (不拉取多余的子模块，速度极快)
+          git clone --depth 1 https://github.com/theos/theos.git $HOME/theos
+          
+          # 2. 下载官方 iOS SDK
+          curl -L https://github.com/theos/sdks/archive/refs/heads/master.zip -o /tmp/sdks.zip
+          unzip -q /tmp/sdks.zip -d /tmp/
+          mkdir -p $HOME/theos/sdks
+          mv /tmp/sdks-master/iPhoneOS15.6.sdk $HOME/theos/sdks/ || mv /tmp/sdks-master/iPhoneOS15.5.sdk $HOME/theos/sdks/
+          
+          # 3. 下载 roothide 专用的打包补丁
+          git clone --depth 1 https://github.com/roothide/theos.git /tmp/roothide
+          cp -r /tmp/roothide/* $HOME/theos/
 
       - name: Build package
         run: |
