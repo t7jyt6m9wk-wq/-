@@ -1,0 +1,30 @@
+name: Build roothide Tweak
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y make git curl xz-utils
+
+      - name: Install roothide Theos
+        run: |
+          bash -c "$(curl -fsSL https://raw.githubusercontent.com/roothide/theos/master/bin/install-theos)"
+
+      - name: Build package
+        run: |
+          export THEOS=$HOME/theos
+          make package
+
+      - name: Upload deb
+        uses: actions/upload-artifact@v4
+        with:
+          name: LockscreenQuickActions-deb
+          path: packages/*.deb
